@@ -35,6 +35,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_spreadsheet_ui: ^0.0.5
+  swayze: ^1.1.0
+  syncfusion_flutter_datagrid: ^28.1.36
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:
