@@ -12,7 +12,7 @@ class _DataSourceViewState extends State<DataSourceView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Data Source"),
+        title: Text(widget.title),
       ),
       body: SafeArea(
         child: Center(

@@ -37,7 +37,11 @@ dependencies:
   flutter_spreadsheet_ui: ^0.0.5
   swayze: ^1.1.0
   syncfusion_flutter_datagrid: ^28.1.36
-  intl: ^0.20.1
+  #intl: ^0.20.1
+  collection: ^1.19.0
+  sorted_list: ^1.0.0
+  syncfusion_flutter_calendar: ^28.1.37
+  file_picker: ^8.1.7
 
 dev_dependencies:
   flutter_test:

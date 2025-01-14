@@ -1,7 +1,5 @@
-import 'dart:async';
-
 import 'package:church_volunteer_scheduler/data/data_source.dart';
-import 'package:church_volunteer_scheduler/sched_sheet.dart';
+import 'package:church_volunteer_scheduler/views/sched_sheet.dart';
 import 'package:church_volunteer_scheduler/views/data_source.dart';
 import 'package:church_volunteer_scheduler/views/stats.dart';
 import 'package:church_volunteer_scheduler/views/configuration.dart';
@@ -9,6 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 void main() {
+  //Set up data source
+  
+  DataSource().generatePlaceholderActivities();
+  DataSource().connector.generateAssignmentsGrid();
   runApp(MyApp());
 }
 
@@ -35,143 +37,59 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-StreamController<bool> loadingController = StreamController<bool>();
-
 class _MyHomePageState extends State<MyHomePage> {
+  int _page = 1;
+  final List<Widget> _pages = [
+    DataSourceView(title: "Data Source"),
+    SchedSheet(),
+    ConfigView(title: "Configuration"),
+    StatsView(title: "Stats")
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Volunteer Scheduler"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.storage_rounded),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const DataSourceView(
-                        title: "Data Source Passed Title")),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings_rounded),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        const ConfigView(title: "Data Source Passed Title")),
-              );
-            },
-          ),
-        ],
-      ),
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.filter_alt_rounded),
-            onPressed: () {
-              print("TODO: Slide up filter options for spreadsheet view");
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.auto_awesome_rounded),
-            onPressed: () {
-              print("TODO: Fill in schedule");
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.share_rounded),
-            onPressed: () {
-              print("TODO: Slide up share/export options");
-            },
-          ),
-          PopupMenuButton<int>(
-              icon: Icon(Icons.ac_unit),
-              itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 1,
-                      child: Row(
-                        children: [
-                          Icon(Icons.star),
-                          //SizedBox(width: 10),
-                          Text("Option 1"),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 2,
-                      child: Row(
-                        children: [
-                          Icon(Icons.star),
-                          SizedBox(width: 10),
-                          Text('Option 2'),
-                        ],
-                      ),
-                    ),
-                  ]),
-          IconButton(
-            icon: const Icon(Icons.pie_chart_rounded),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        const StatsView(title: "Stats Passed Title")),
-              );
-            },
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text("Volunteer Scheduler"),
+        ),
+        bottomNavigationBar: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(Icons.arrow_back_ios_rounded),
-              ],
+            IconButton(
+              icon: const Icon(Icons.storage_rounded),
+              onPressed: () {
+                setState(() {
+                  _page = 0;
+                });
+              },
             ),
-            Expanded(
-              child: Scaffold(
-                body: StreamBuilder(
-                    stream: loadingController.stream,
-                    builder:
-                        (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                      return Stack(children: [
-                        SfDataGrid(
-                            source:
-                                ActivitiesDataGridSource.getFalseDataSource(),
-                            columnWidthMode: ColumnWidthMode.auto,//ColumnWidthMode.fill,
-                            allowEditing: true,
-                            gridLinesVisibility: GridLinesVisibility.both,
-                            headerGridLinesVisibility: GridLinesVisibility.both,
-                            navigationMode: GridNavigationMode.cell,
-                            editingGestureType: EditingGestureType.doubleTap,
-                            selectionMode: SelectionMode.single,
-                            onCellTap: (DataGridCellTapDetails details) => print(details.rowColumnIndex.toString()),
-                            columns: ActivityData.falseColumnNamesDefault
-                                .map((s) => GridColumn(
-                                    columnName: s,
-
-                                    label: Container(child: Text(s), alignment: Alignment.center)))
-                                .toList()),
-                        if (snapshot.data == true)
-                          const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                      ]);
-                    }),
-              ),
+            IconButton(
+              icon: const Icon(Icons.table_chart),
+              onPressed: () {
+                setState(() {
+                  _page = 1;
+                });
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.settings_rounded),
+              onPressed: () {
+                setState(() {
+                  _page = 2;
+                });
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.pie_chart_rounded),
+              onPressed: () {
+                setState(() {
+                  _page = 3;
+                });
+              },
             ),
           ],
         ),
-      ),
-    );
+        body: _pages[_page]);
   }
 }
